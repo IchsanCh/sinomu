@@ -231,7 +231,7 @@
                                                     </p>
                                                     <p class="text-base-content mb-4">Mulai berlangganan untuk melihat
                                                         riwayat pembayaran Anda</p>
-                                                    <label for="buy-package-modal" class="btn btn-primary btn-sm">
+                                                    <label for="buy-package-modal" class="btn btnprimarys btn-sm">
                                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
                                                             viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round"

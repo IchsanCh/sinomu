@@ -113,7 +113,7 @@ class CustomPesanController extends Controller
             $user->update([
                 'pesan_pegawai' => $request->isi_pesan,
             ]);
-            return redirect()->back()->with('success', 'Pesan penyerahan berhasil disimpan!');
+            return redirect()->back()->with('success', 'Pesan pegawai berhasil disimpan!');
         }
 
         return view('user.pesan-pegawai', compact('user'));

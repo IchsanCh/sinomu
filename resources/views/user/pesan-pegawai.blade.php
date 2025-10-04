@@ -240,18 +240,17 @@
                 hour: '2-digit',
                 minute: '2-digit'
             });
-
             @if (session('error'))
-                showToast('error', "{{ session('error') }}");
+                showToast('error', "{{ session('error') }}", 'Error');
             @endif
 
             @if (session('success'))
-                showToast('success', "{{ session('success') }}");
+                showToast('success', "{{ session('success') }}", 'Success');
             @endif
 
             @if ($errors->any())
                 @foreach ($errors->all() as $error)
-                    showToast('error', "{{ $error }}");
+                    showToast('error', "{{ $error }}", 'Validation Error');
                 @endforeach
             @endif
 
@@ -383,47 +382,52 @@
             textarea.dispatchEvent(new Event('input'));
         }
 
-        function showToast(type, message) {
+        function showToast(type, message, title = '') {
             const toastContainer = document.getElementById('toastContainer');
             if (!toastContainer) return;
 
-            let alertClass = 'alert-info';
-            let icon =
+            const alertClass = type === 'error' ? 'alert-error' :
+                type === 'success' ? 'alert-success' :
+                type === 'warning' ? 'alert-warning' : 'alert-info';
+
+            const gradientClass = type === 'error' ? 'from-red-500 to-red-600' :
+                type === 'success' ? 'from-green-500 to-green-600' :
+                type === 'warning' ? 'from-yellow-500 to-yellow-600' : 'from-blue-500 to-blue-600';
+
+            const icon = type === 'error' ?
+                '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>' :
+                type === 'success' ?
+                '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>' :
                 '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
 
-            if (type === 'error') {
-                alertClass = 'alert-error';
-                icon =
-                    '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-            } else if (type === 'success') {
-                alertClass = 'alert-success';
-                icon =
-                    '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-            } else if (type === 'warning') {
-                alertClass = 'alert-warning';
-                icon =
-                    '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
-            }
-
             const toast = document.createElement('div');
-            toast.className = `alert ${alertClass} shadow-lg mb-4`;
+            toast.className = `relative mb-4 animate-in slide-in-from-right duration-300`;
             toast.innerHTML = `
-                <div class="flex items-center gap-3">
-                    ${icon}
-                    <span>${message}</span>
-                    <button class="btn btn-ghost btn-xs hover:bg-white/20" onclick="this.parentElement.parentElement.remove()">✕</button>
-                </div>
-            `;
-
+                    <div class="relative bg-white/90 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-r ${gradientClass} opacity-10"></div>
+                        <div class="relative p-4 flex items-start gap-4">
+                            <div class="p-2 bg-gradient-to-br ${gradientClass} rounded-xl text-white flex-shrink-0">
+                                ${icon}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                ${title ? `<div class="font-bold text-slate-800 mb-1">${title}</div>` : ''}
+                                <div class="text-slate-600 text-sm leading-relaxed">${message}</div>
+                            </div>
+                            <button class="btn btn-ghost btn-sm btn-circle hover:bg-slate-100 flex-shrink-0" onclick="this.closest('.animate-in').remove()">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
             toastContainer.appendChild(toast);
-
             setTimeout(() => {
                 if (toast.parentElement) {
-                    toast.style.transform = 'translateX(100%)';
-                    toast.style.transition = 'transform 0.3s ease-in-out';
+                    toast.classList.add('animate-out', 'slide-out-to-right');
                     setTimeout(() => toast.remove(), 300);
                 }
-            }, 5000);
+            }, 4000);
         }
     </script>
 @endsection

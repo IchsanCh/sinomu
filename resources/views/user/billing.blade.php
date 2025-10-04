@@ -26,21 +26,82 @@
                 </div>
             </div>
         </div>
-        <div class="max-w-7xl mx-auto px-6 py-8">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
-                <div class="alert alert-warning">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-4 w-4" fill="none"
-                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-                    </svg>
-                    <span class="font-semibold">
-                        Pembayaran saat ini dilakukan secara manual karena akun Midtrans masih dalam proses verifikasi.
-                        Jika membutuhkan bantuan, silakan hubungi
-                        <a href="https://wa.me/6285175112406" title="Hubungi Admin" class="underline wad3">Admin</a>.
-                    </span>
-
+        <input type="checkbox" id="buy-package-modal" class="modal-toggle" />
+        <div class="modal modal-bottom sm:modal-middle">
+            <div class="modal-box max-w-4xl wadb4 shadow-2xl">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-2xl font-bold wad1 flex items-center gap-2">
+                        <svg class="w-6 h-6 wad1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                        </svg>
+                        Pilih Paket Langganan
+                    </h3>
+                    <label for="buy-package-modal" class="btn btn-sm btn-circle btnprimarys">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </label>
                 </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    @forelse ($packages as $index => $package)
+                        <div
+                            class="card wadb1 shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:scale-105 borderprimary">
+                            <div class="card-body relative">
+                                <div class="absolute -top-4 -right-4 w-20 h-20 wadb3 rounded-full opacity-55"></div>
+                                <div class="absolute -bottom-6 -left-6 w-16 h-16 wadb3 rounded-full"></div>
+
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-12 h-12 rounded-xl wadbo3 flex items-center justify-center">
+                                        <svg class="w-6 h-6 wad4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="{{ $index % 2 == 0 ? 'M13 10V3L4 14h7v7l9-11h-7z' : 'M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z' }}" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xl font-bold text-white">{{ $package->name }}</h4>
+                                    </div>
+                                </div>
+
+                                <p class="text-white mb-4">{{ $package->description }}</p>
+
+                                <div class="flex items-baseline gap-1 mb-6">
+                                    <span class="text-3xl font-bold wad4">Rp
+                                        {{ number_format($package->price) }}</span>
+                                    <span class="text-white">/ {{ $package->duration_days }} hari</span>
+                                </div>
+
+                                <div class="card-actions justify-end">
+                                    <form method="POST" action="{{ route('billing.pay') }}">
+                                        @csrf
+                                        <input type="hidden" name="package_id" value="{{ $package->id }}">
+                                        <button
+                                            class="btn btnsecondarys btn-block shadow-lg hover:shadow-xl transition-all duration-300">Langganan
+                                            Sekarang</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <p>Paket tidak tersedia</p>
+                    @endforelse
+                </div>
+            </div>
+            <label class="modal-backdrop" for="buy-package-modal">Close</label>
+        </div>
+        <div class="max-w-7xl mx-auto px-6 py-8">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+                <label for="buy-package-modal"
+                    class="btn btnprimarys btn-lg shadow-xl hover:shadow-2xl transition-all duration-300 group">
+                    <svg class="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Beli Paket
+                </label>
             </div>
             <div class="card bg-base-100 shadow-2xl border border-base-300">
                 <div class="card-body p-0">
@@ -170,7 +231,7 @@
                                                     </p>
                                                     <p class="text-base-content mb-4">Mulai berlangganan untuk melihat
                                                         riwayat pembayaran Anda</p>
-                                                    <label for="buy-package-modal" class="btn btn-primary hidden btn-sm">
+                                                    <label for="buy-package-modal" class="btn btnprimarys btn-sm">
                                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
                                                             viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -250,67 +311,66 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             @if (session('error'))
-                showToast('error', "{{ session('error') }}");
+                showToast('error', "{{ session('error') }}", 'Error');
             @endif
 
             @if (session('success'))
-                showToast('success', "{{ session('success') }}");
+                showToast('success', "{{ session('success') }}", 'Success');
             @endif
 
             @if ($errors->any())
                 @foreach ($errors->all() as $error)
-                    showToast('error', "{{ $error }}");
+                    showToast('error', "{{ $error }}", 'Validation Error');
                 @endforeach
             @endif
         });
 
-        function showToast(type, message) {
+        function showToast(type, message, title = '') {
             const toastContainer = document.getElementById('toastContainer');
             if (!toastContainer) return;
 
-            const alertClass = type === 'error' ? 'alert-error' : 'alert-success';
+            const alertClass = type === 'error' ? 'alert-error' :
+                type === 'success' ? 'alert-success' :
+                type === 'warning' ? 'alert-warning' : 'alert-info';
+
+            const gradientClass = type === 'error' ? 'from-red-500 to-red-600' :
+                type === 'success' ? 'from-green-500 to-green-600' :
+                type === 'warning' ? 'from-yellow-500 to-yellow-600' : 'from-blue-500 to-blue-600';
+
             const icon = type === 'error' ?
-                '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>' :
-                '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>' :
+                type === 'success' ?
+                '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>' :
+                '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
 
             const toast = document.createElement('div');
-            toast.className = `alert ${alertClass} shadow-2xl mb-4 border-0 backdrop-blur-sm`;
-            toast.style.transform = 'translateX(100%)';
-            toast.style.opacity = '0';
+            toast.className = `relative mb-4 animate-in slide-in-from-right duration-300`;
             toast.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <div class="flex-shrink-0">${icon}</div>
-                    <span class="font-medium">${message}</span>
-                    <button class="btn btn-ghost btn-sm btn-circle ml-auto hover:btn-error transition-colors duration-200" onclick="removeToast(this)">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-            `;
-
+                    <div class="relative bg-white/90 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-r ${gradientClass} opacity-10"></div>
+                        <div class="relative p-4 flex items-start gap-4">
+                            <div class="p-2 bg-gradient-to-br ${gradientClass} rounded-xl text-white flex-shrink-0">
+                                ${icon}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                ${title ? `<div class="font-bold text-slate-800 mb-1">${title}</div>` : ''}
+                                <div class="text-slate-600 text-sm leading-relaxed">${message}</div>
+                            </div>
+                            <button class="btn btn-ghost btn-sm btn-circle hover:bg-slate-100 flex-shrink-0" onclick="this.closest('.animate-in').remove()">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
             toastContainer.appendChild(toast);
             setTimeout(() => {
-                toast.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-                toast.style.transform = 'translateX(0)';
-                toast.style.opacity = '1';
-            }, 10);
-            setTimeout(() => {
-                removeToast(toast.querySelector('button'));
-            }, 5000);
-        }
-
-        function removeToast(button) {
-            const toast = button.closest('.alert');
-            if (toast) {
-                toast.style.transform = 'translateX(100%)';
-                toast.style.opacity = '0';
-                setTimeout(() => {
-                    if (toast.parentElement) {
-                        toast.remove();
-                    }
-                }, 300);
-            }
+                if (toast.parentElement) {
+                    toast.classList.add('animate-out', 'slide-out-to-right');
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 4000);
         }
         document.querySelectorAll('a[href*="langganan"], a[href*="subscribe"]').forEach(button => {
             button.addEventListener('click', function(e) {
